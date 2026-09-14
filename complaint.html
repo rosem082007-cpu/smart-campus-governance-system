@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Report Campus Problem</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <!-- Common CSS -->
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+
+        html,
+        body {
+            min-height: 100%;
+        }
+
+        body {
+            min-height: 100vh;
+        }
+
+        .card {
+            border: none;
+            border-radius: 24px;
+            background: rgba(255, 255, 255, 0.96);
+        }
+
+        textarea {
+            resize: none;
+        }
+
+        .photo-preview {
+            display: none;
+            width: 220px;
+            height: 220px;
+            object-fit: cover;
+            border-radius: 12px;
+            border: 2px solid #0d6efd;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .required-star {
+            color: red;
+        }
+
+        .form-control,
+        .form-select {
+            border-radius: 10px;
+            padding: 10px 12px;
+        }
+
+        .btn {
+            border-radius: 10px;
+        }
+
+        .navbar {
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
+        }
+
+        .page-subtitle {
+            font-size: 15px;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+    <!-- ================= NAVIGATION ================= -->
+
+    <nav class="navbar navbar-dark bg-dark px-4">
+
+        <span class="navbar-brand">
+            🏫 Smart Campus
+        </span>
+
+        <a href="/student"
+           class="btn btn-outline-light btn-sm">
+
+            ⬅️ Back
+
+        </a>
+
+    </nav>
+
+
+    <!-- ================= MAIN CONTAINER ================= -->
+
+    <div class="container mt-5 mb-5">
+
+        <div class="row justify-content-center">
+
+            <div class="col-md-7">
+
+                <div class="card shadow p-5">
+
+                    <!-- ================= TITLE ================= -->
+
+                    <div class="text-center mb-4">
+
+                        <h2>
+                            📝 Report Campus Problem
+                        </h2>
+
+                        <p class="text-muted page-subtitle">
+
+                            Describe your problem clearly.
+                            Our AI will analyze it automatically 🤖
+
+                        </p>
+
+                    </div>
+
+
+                    <!-- ================= FORM ================= -->
+
+                    <form method="POST"
+                          action="/complaint"
+                          id="complaintForm"
+                          enctype="multipart/form-data">
+
+
+                        <!-- ================= DEPARTMENT ================= -->
+
+                        <div class="mb-4">
+
+                            <label class="form-label fw-bold">
+
+                                🏫 Department
+                                <span class="required-star">*</span>
+
+                            </label>
+
+                            <input
+                                type="text"
+                                name="department"
+                                class="form-control"
+                                placeholder="Example: BCA"
+                                required>
+
+                        </div>
+
+
+                        <!-- ================= LOCATION ================= -->
+
+                        <div class="mb-4">
+
+                            <label class="form-label fw-bold">
+
+                                📍 Location
+                                <span class="required-star">*</span>
+
+                            </label>
+
+                            <select
+                                class="form-select"
+                                id="location"
+                                name="location"
+                                onchange="toggleLocation()"
+                                required>
+
+                                <option value=""
+                                        selected
+                                        disabled>
+
+                                    Select Location
+
+                                </option>
+
+                                <!-- Blocks -->
+
+                                <option value="Main Block">
+                                    Main Block
+                                </option>
+
+                                <option value="Anna Block">
+                                    Anna Block
+                                </option>
+
+                                <option value="Viswa Block">
+                                    Viswa Block
+                                </option>
+
+                                <option value="Wisdom Block">
+                                    Wisdom Block
+                                </option>
+
+                                <option value="Admin Block">
+                                    Admin Block
+                                </option>
+
+
+                                <!-- Academic Areas -->
+
+                                <option value="Classroom">
+                                    Classroom
+                                </option>
+
+                                <option value="Computer Lab">
+                                    Computer Lab
+                                </option>
+
+                                <option value="Auditorium">
+                                    Auditorium
+                                </option>
+
+                                <option value="Library">
+                                    Library
+                                </option>
+
+
+                                <!-- Other Campus Areas -->
+
+                                <option value="Canteen">
+                                    Canteen
+                                </option>
+
+                                <option value="Hostel">
+                                    Hostel
+                                </option>
+
+                                <option value="Parking Area">
+                                    Parking Area
+                                </option>
+
+                                <option value="Playground">
+                                    Playground
+                                </option>
+
+                                <option value="Washroom">
+                                    Washroom
+                                </option>
+
+                                <option value="Other">
+                                    Other
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <!-- ================= OTHER LOCATION ================= -->
+
+                        <div
+                            class="mb-4"
+                            id="otherLocationDiv"
+                            style="display: none;">
+
+                            <label class="form-label fw-bold">
+
+                                📍 Specify Location
+                                <span class="required-star">*</span>
+
+                            </label>
+
+                            <input
+                                type="text"
+                                id="otherLocation"
+                                name="otherLocation"
+                                class="form-control"
+                                placeholder="Example: Near Seminar Hall">
+
+                        </div>
+
+
+                        <!-- ================= DESCRIPTION ================= -->
+
+                        <div class="mb-4">
+
+                            <label class="form-label fw-bold">
+
+                                📄 Problem Description
+                                <span class="required-star">*</span>
+
+                            </label>
+
+                            <textarea
+                                name="description"
+                                class="form-control"
+                                rows="6"
+                                placeholder="Example: Water is leaking near the Computer Lab..."
+                                required></textarea>
+
+                        </div>
+
+
+                        <!-- ================= PHOTO ================= -->
+
+                        <div class="mb-4">
+
+                            <label class="form-label fw-bold">
+
+                                📷 Upload Problem Photo
+                                <span class="required-star">*</span>
+
+                            </label>
+
+                            <p class="text-muted small mb-2">
+
+                                Please upload a photo showing the campus problem.
+
+                            </p>
+
+
+                            <!-- Add Photo Button -->
+
+                            <label
+                                for="photo"
+                                class="btn btn-primary">
+
+                                📷 Add Photo
+
+                            </label>
+
+
+                            <!-- File Input -->
+
+                            <!-- required removed intentionally.
+                                 Custom alert checks photo upload. -->
+
+                            <input
+                                type="file"
+                                id="photo"
+                                name="photo"
+                                accept="image/*"
+                                capture="environment"
+                                hidden
+                                onchange="previewImage(event)">
+
+
+                            <!-- Photo Preview -->
+
+                            <div class="mt-3">
+
+                                <img
+                                    id="preview"
+                                    class="photo-preview"
+                                    alt="Photo Preview">
+
+                            </div>
+
+
+                            <!-- Remove Button -->
+
+                            <div class="mt-3">
+
+                                <button
+                                    type="button"
+                                    id="removeBtn"
+                                    class="btn btn-danger"
+                                    style="display: none;"
+                                    onclick="removeImage()">
+
+                                    🗑 Remove Image
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- ================= EMAIL ================= -->
+
+                        <div class="mb-4">
+
+                            <label class="form-label fw-bold">
+
+                                📧 Email
+                                <span class="required-star">*</span>
+
+                            </label>
+
+                            <input
+                                type="email"
+                                name="email"
+                                class="form-control"
+                                placeholder="Enter your email"
+                                required>
+
+                        </div>
+
+
+                        <!-- ================= AI INFO ================= -->
+
+                        <div class="alert alert-info">
+
+                            🤖 <strong>AI Analysis:</strong>
+
+                            <br>
+
+                            Category and priority will be predicted automatically.
+
+                        </div>
+
+
+                        <!-- ================= SUBMIT ================= -->
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary w-100"
+                            onclick="return validatePhoto()">
+
+                            🚀 Submit Complaint
+
+                        </button>
+
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================= JAVASCRIPT ================= -->
+
+    <script>
+
+        /* ================= PHOTO PREVIEW ================= */
+
+        function previewImage(event) {
+
+            const file = event.target.files[0];
+
+            if (!file) {
+                return;
+            }
+
+            const preview = document.getElementById("preview");
+            const removeBtn = document.getElementById("removeBtn");
+
+            preview.src = URL.createObjectURL(file);
+            preview.style.display = "block";
+            removeBtn.style.display = "inline-block";
+
+        }
+
+
+        /* ================= REMOVE PHOTO ================= */
+
+        function removeImage() {
+
+            const photo = document.getElementById("photo");
+            const preview = document.getElementById("preview");
+            const removeBtn = document.getElementById("removeBtn");
+
+            photo.value = "";
+
+            preview.src = "";
+            preview.style.display = "none";
+
+            removeBtn.style.display = "none";
+
+        }
+
+
+        /* ================= LOCATION ================= */
+
+        function toggleLocation() {
+
+            const location =
+                document.getElementById("location").value;
+
+            const otherDiv =
+                document.getElementById("otherLocationDiv");
+
+            const otherInput =
+                document.getElementById("otherLocation");
+
+
+            if (location === "Other") {
+
+                otherDiv.style.display = "block";
+
+                otherInput.setAttribute(
+                    "required",
+                    "required"
+                );
+
+            } else {
+
+                otherDiv.style.display = "none";
+
+                otherInput.removeAttribute(
+                    "required"
+                );
+
+                otherInput.value = "";
+
+            }
+
+        }
+
+
+        /* ================= PHOTO VALIDATION ================= */
+
+        function validatePhoto() {
+
+            const photo =
+                document.getElementById("photo");
+
+            if (photo.files.length === 0) {
+
+                alert(
+                    "⚠️ Please upload a problem photo before submitting the complaint."
+                );
+
+                return false;
+
+            }
+
+            return true;
+
+        }
+
+    </script>
+
+
+</body>
+
+</html>

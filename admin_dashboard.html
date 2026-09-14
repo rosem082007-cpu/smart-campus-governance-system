@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Admin Dashboard</title>
+
+    <!-- Bootstrap -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet">
+
+    <!-- Common CSS -->
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+
+        body {
+            background-image:
+                linear-gradient(
+                    rgba(0, 0, 0, 0.35),
+                    rgba(0, 0, 0, 0.35)
+                ),
+                url("{{ url_for('static', filename='images/college.png') }}");
+
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+
+            min-height: 100vh;
+            color: #212529;
+        }
+
+        .navbar {
+            min-height: 75px;
+            padding: 15px 30px !important;
+            border-radius: 0 0 18px 18px;
+        }
+
+        .navbar-brand {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .navbar .btn {
+            font-size: 16px;
+            padding: 9px 16px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #5f1659, #7c3aed);
+            color: white;
+            border-radius: 18px;
+            padding: 25px;
+            width: 100%;
+        }
+
+        .card {
+            border-radius: 18px;
+            border: none;
+        }
+
+        .table {
+            vertical-align: middle;
+        }
+
+        .complaint-table td {
+            white-space: nowrap;
+        }
+
+        .problem-cell {
+            min-width: 220px;
+            max-width: 350px;
+            white-space: normal !important;
+        }
+
+        #adminSettings {
+            border-left: 4px solid #1a1a1a;
+            box-shadow: -5px 0 20px rgba(58, 64, 69, 0.25);
+        }
+
+        /* Keep dashboard sections one below another */
+        .container {
+            display: block !important;
+        }
+
+        /* Search card full width */
+        .container > .card {
+            width: 100%;
+        }
+
+        /* Header full width */
+        .container > .header {
+            width: 100%;
+        }
+
+        /* Summary cards */
+        .row {
+            display: flex;
+        }
+
+        /* Settings side panel */
+        .offcanvas {
+            width: 380px !important;
+        }
+
+        .settings-title {
+            font-weight: 600;
+            color: #4f46e5;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <!-- ================= NAVBAR ================= -->
+
+    <nav class="navbar navbar-dark bg-dark px-4">
+
+        <!-- Left Side -->
+        <span class="navbar-brand mb-0">
+            🏫 Smart Campus
+        </span>
+
+        <!-- Right Side -->
+        <div class="d-flex align-items-center gap-2">
+
+            <a href="/export" class="btn btn-success btn-sm">
+                📥 Export Excel
+            </a>
+
+            <a href="/analytics" class="btn btn-outline-light btn-sm">
+                📊 Analytics
+            </a>
+
+            <!-- Direct Settings Button -->
+
+        <button
+            class="btn btn-outline-light btn-sm settings-btn"
+            type="button"
+            data-bs-toggle="offcanvas"
+            data-bs-target="#adminSettings"
+            aria-controls="adminSettings"
+            title="Settings">
+
+            ⚙️
+        </button>
+
+</nav>
+
+    <!-- ================= MAIN CONTAINER ================= -->
+
+    <div class="container mt-4">
+
+        <!-- ================= HEADER ================= -->
+
+        <div class="header shadow mb-4">
+
+            <div class="d-flex justify-content-between align-items-center">
+
+                <div>
+
+                    <h2>
+                        👨‍💼 Admin Dashboard
+                    </h2>
+
+                    <p class="mb-0">
+                        AI-Based Smart Campus Governance System
+                    </p>
+
+                </div>
+
+                <!-- ================= NOTIFICATION ================= -->
+
+                <div class="dropdown">
+
+                    <button
+                        class="btn btn-light position-relative"
+                        data-bs-toggle="dropdown"
+                        type="button">
+
+                        🔔
+
+                        {% if count > 0 %}
+
+                        <span
+                            class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+
+                            {{ count }}
+
+                        </span>
+
+                        {% endif %}
+
+                    </button>
+
+                    <ul class="dropdown-menu dropdown-menu-end shadow">
+
+                        {% if notifications %}
+
+                            {% for n in notifications %}
+
+                            <li>
+
+                                <span class="dropdown-item">
+
+                                    <div class="fw-bold">
+                                        {{ n.message }}
+                                    </div>
+
+                                    <small class="text-muted">
+                                        {{ n.time }}
+                                    </small>
+
+                                </span>
+
+                            </li>
+
+                            {% endfor %}
+
+                        {% else %}
+
+                            <li>
+
+                                <span class="dropdown-item text-muted">
+                                    🔕 No New Notifications
+                                </span>
+
+                            </li>
+
+                        {% endif %}
+
+                    </ul>
+
+                </div>
+
+                <!-- END NOTIFICATION -->
+
+            </div>
+
+        </div>
+
+        <!-- ================= SEARCH & FILTER ================= -->
+
+        <div class="card shadow p-4 mb-4">
+
+            <h5 class="mb-3">
+                🔎 Search & Filter Complaints
+            </h5>
+
+            <form method="GET" action="/admin">
+
+                <div class="row g-2">
+
+                    <!-- Search -->
+
+                    <div class="col-md-3">
+
+                        <input
+                            type="text"
+                            name="search"
+                            class="form-control"
+                            placeholder="👤 Name / Department / Location / Problem"
+                            value="{{ search|default('') }}">
+
+                    </div>
+
+                    <!-- Category -->
+
+                    <div class="col-md-3">
+
+                        <select
+                            name="category"
+                            class="form-select">
+
+                            <option value="">
+                                🏷️ All Categories
+                            </option>
+
+                            <option
+                                value="Electrical"
+                                {% if selected_category == "Electrical" %}selected{% endif %}>
+                                Electrical
+                            </option>
+
+                            <option
+                                value="Water"
+                                {% if selected_category == "Water" %}selected{% endif %}>
+                                Water
+                            </option>
+
+                            <option
+                                value="Network"
+                                {% if selected_category == "Network" %}selected{% endif %}>
+                                Network
+                            </option>
+
+                            <option
+                                value="Computer Lab"
+                                {% if selected_category == "Computer Lab" %}selected{% endif %}>
+                                Computer Lab
+                            </option>
+
+                            <option
+                                value="Cleanliness"
+                                {% if selected_category == "Cleanliness" %}selected{% endif %}>
+                                Cleanliness
+                            </option>
+
+                            <option
+                                value="Infrastructure"
+                                {% if selected_category == "Infrastructure" %}selected{% endif %}>
+                                Infrastructure
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <!-- Priority -->
+
+                    <div class="col-md-2">
+
+                        <select
+                            name="priority"
+                            class="form-select">
+
+                            <option value="">
+                                🚨 Priority
+                            </option>
+
+                            <option
+                                value="High"
+                                {% if selected_priority == "High" %}selected{% endif %}>
+                                High
+                            </option>
+
+                            <option
+                                value="Medium"
+                                {% if selected_priority == "Medium" %}selected{% endif %}>
+                                Medium
+                            </option>
+
+                            <option
+                                value="Low"
+                                {% if selected_priority == "Low" %}selected{% endif %}>
+                                Low
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <!-- Status -->
+
+                    <div class="col-md-2">
+
+                        <select
+                            name="status"
+                            class="form-select">
+
+                            <option value="">
+                                📌 Status
+                            </option>
+
+                            <option
+                                value="Pending"
+                                {% if selected_status == "Pending" %}selected{% endif %}>
+                                Pending
+                            </option>
+
+                            <option
+                                value="Escalated"
+                                {% if selected_status == "Escalated" %}selected{% endif %}>
+                                Escalated
+                            </option>
+
+                            <option
+                                value="Resolved"
+                                {% if selected_status == "Resolved" %}selected{% endif %}>
+                                Resolved
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <!-- Search Button -->
+
+                    <div class="col-md-2">
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary w-100">
+
+                            🔍 Search
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+                <div class="mt-3">
+
+                    <a
+                        href="/admin"
+                        class="btn btn-outline-secondary btn-sm">
+
+                        🔄 Clear Filters
+
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+
+        <!-- ================= SUMMARY ================= -->
+
+        <div class="row mb-4">
+
+            <!-- Total -->
+
+            <div class="col-md-4 mb-3">
+
+                <div class="card shadow p-3">
+
+                    <h5>
+                        📋 Results
+                    </h5>
+
+                    <h2>
+                        {{ complaints|length }}
+                    </h2>
+
+                </div>
+
+            </div>
+
+            <!-- Pending -->
+
+            <div class="col-md-4 mb-3">
+
+                <div class="card shadow p-3">
+
+                    <h5>
+                        ⏳ Pending
+                    </h5>
+
+                    <h2>
+
+                        {{
+                            complaints
+                            |selectattr("status", "equalto", "Pending")
+                            |list
+                            |length
+                        }}
+
+                    </h2>
+
+                </div>
+
+            </div>
+
+            <!-- Resolved -->
+
+            <div class="col-md-4 mb-3">
+
+                <div class="card shadow p-3">
+
+                    <h5>
+                        ✅ Resolved
+                    </h5>
+
+                    <h2>
+
+                        {{
+                            complaints
+                            |selectattr("status", "equalto", "Resolved")
+                            |list
+                            |length
+                        }}
+
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ================= COMPLAINT TABLE ================= -->
+
+        <div class="card shadow">
+
+            <div class="card-body">
+
+                <h5 class="mb-3">
+                    📢 Complaint List
+                </h5>
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover complaint-table">
+
+                        <thead class="table-dark">
+
+                            <tr>
+
+                                <th>ID</th>
+                                <th>Student</th>
+                                <th>Department</th>
+                                <th>Location</th>
+                                <th>Problem</th>
+                                <th>Category</th>
+                                <th>Priority</th>
+                                <th>Status</th>
+                                <th>📷 Photo</th>
+                                <th>Action</th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            {% for c in complaints %}
+
+                            <tr>
+
+                                <!-- Complaint ID -->
+
+                                <td>
+                                    <strong>{{ c.id }}</strong>
+                                </td>
+
+                                <!-- Student -->
+
+                                <td>
+                                    {{ c.student_name }}
+                                </td>
+
+                                <!-- Department -->
+
+                                <td>
+                                    {{ c.department }}
+                                </td>
+
+                                <!-- Location -->
+
+                                <td>
+
+                                    {% if c.location %}
+
+                                        📍 {{ c.location }}
+
+                                    {% else %}
+
+                                        <span class="text-muted">
+                                            Not Provided
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+                                <!-- Problem -->
+
+                                <td class="problem-cell">
+                                    {{ c.description }}
+                                </td>
+
+                                <!-- Category -->
+
+                                <td>
+                                    🏷️ {{ c.category }}
+                                </td>
+
+                                <!-- Priority -->
+
+                                <td>
+
+                                    {% if c.priority.startswith("High") %}
+
+                                        <span class="badge bg-danger">
+                                            🚨 High
+                                        </span>
+
+                                    {% elif c.priority.startswith("Medium") %}
+
+                                        <span class="badge bg-warning text-dark">
+                                            ⚠️ Medium
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="badge bg-success">
+                                            ✅ Low
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+                                <!-- Status -->
+
+                                <td>
+
+                                    {% if c.status == "Pending" %}
+
+                                        <span class="badge bg-secondary">
+                                            ⏳ Pending
+                                        </span>
+
+                                    {% elif c.status == "Escalated" %}
+
+                                        <span class="badge bg-danger">
+                                            🚨 Escalated
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="badge bg-success">
+                                            ✅ Resolved
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+                                <!-- Photo -->
+
+                                <td>
+
+                                    {% if c.photo %}
+
+                                        <a
+                                            href="{{ url_for('static', filename='uploads/' + c.photo) }}"
+                                            target="_blank">
+
+                                            <img
+                                                src="{{ url_for('static', filename='uploads/' + c.photo) }}"
+                                                width="70"
+                                                height="60"
+                                                class="img-thumbnail"
+                                                style="object-fit: cover;">
+
+                                        </a>
+
+                                    {% else %}
+
+                                        <span class="text-muted">
+                                            No Photo
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+                                <!-- Action -->
+
+                                <td>
+
+                                    {% if c.status != "Resolved" %}
+
+                                        <a
+                                            href="/resolve/{{ c.id }}"
+                                            class="btn btn-success btn-sm mb-1">
+
+                                            ✅ Resolve
+
+                                        </a>
+
+                                    {% else %}
+
+                                        <span class="text-success fw-bold">
+                                            ✔️ Completed
+                                        </span>
+
+                                    {% endif %}
+
+                                    <a
+                                        href="/delete/{{ c.id }}"
+                                        class="btn btn-danger btn-sm"
+                                        onclick="return confirm('Delete this complaint?')">
+
+                                        🗑 Delete
+
+                                    </a>
+
+                                </td>
+
+                            </tr>
+
+                            {% else %}
+
+                            <!-- No complaints -->
+
+                            <tr>
+
+                                <td
+                                    colspan="10"
+                                    class="text-center py-4">
+
+                                    📭 No complaints found.
+
+                                </td>
+
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ================= BACK TO TOP / END ================= -->
+
+        <div class="text-center my-4">
+
+            <a
+                href="/admin"
+                class="btn btn-dark">
+
+                🔄 Refresh Dashboard
+
+            </a>
+
+        </div>
+
+    </div>
+
+    <!-- Bootstrap JS -->
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+    </script>
+
+    <!-- ================= ADMIN SETTINGS SIDE PANEL ================= -->
+
+    <div
+        class="offcanvas offcanvas-end"
+        tabindex="-1"
+        id="adminSettings"
+        aria-labelledby="adminSettingsLabel">
+
+        <!-- Header -->
+
+        <div class="offcanvas-header bg-dark text-white">
+
+            <div>
+
+                <h5
+                    class="offcanvas-title"
+                    id="adminSettingsLabel">
+
+                    ⚙️ Admin Settings
+
+                </h5>
+
+                <small class="text-white-50">
+                    CampusAI System Controls
+                </small>
+
+            </div>
+
+            <button
+                type="button"
+                class="btn-close btn-close-white"
+                data-bs-dismiss="offcanvas">
+            </button>
+
+        </div>
+
+        <!-- Body -->
+
+        <div class="offcanvas-body">
+
+            <!-- Notifications -->
+
+            <div class="settings-section">
+
+                <h6 class="settings-title">
+                    🔔 Notifications
+                </h6>
+
+                <div class="form-check form-switch mb-3">
+
+                    <input
+                        class="form-check-input"
+                        type="checkbox"
+                        id="newComplaintAlert"
+                        checked>
+
+                    <label
+                        class="form-check-label"
+                        for="newComplaintAlert">
+
+                        New Complaint Alerts
+
+                    </label>
+
+                </div>
+
+                <div class="form-check form-switch mb-3">
+
+                    <input
+                        class="form-check-input"
+                        type="checkbox"
+                        id="highPriorityAlert"
+                        checked>
+
+                    <label
+                        class="form-check-label"
+                        for="highPriorityAlert">
+
+                        High Priority Alerts
+
+                    </label>
+
+                </div>
+
+                <div class="form-check form-switch mb-3">
+
+                    <input
+                        class="form-check-input"
+                        type="checkbox"
+                        id="resolutionAlert"
+                        checked>
+
+                    <label
+                        class="form-check-label"
+                        for="resolutionAlert">
+
+                        Resolution Alerts
+
+                    </label>
+
+                </div>
+
+            </div>
+
+            <hr>
+
+            <!-- Complaint Management -->
+
+            <div class="settings-section">
+
+                <h6 class="settings-title">
+                    🚨 Complaint Management
+                </h6>
+
+                <div class="form-check form-switch mb-3">
+
+                    <input
+                        class="form-check-input"
+                        type="checkbox"
+                        id="autoEscalation"
+                        checked>
+
+                    <label
+                        class="form-check-label"
+                        for="autoEscalation">
+
+                        Auto Escalation
+
+                    </label>
+
+                </div>
+
+                <label class="form-label">
+                    ⏱️ Escalation Time
+                </label>
+
+                <select
+                    class="form-select mb-3"
+                    id="escalationTime">
+
+                    <option value="12">
+                        12 Hours
+                    </option>
+
+                    <option value="24" selected>
+                        24 Hours
+                    </option>
+
+                    <option value="48">
+                        48 Hours
+                    </option>
+
+                </select>
+
+                <div class="form-check form-switch mb-3">
+
+                    <input
+                        class="form-check-input"
+                        type="checkbox"
+                        id="duplicateDetection"
+                        checked>
+
+                    <label
+                        class="form-check-label"
+                        for="duplicateDetection">
+
+                        Duplicate Complaint Detection
+
+                    </label>
+
+                </div>
+
+            </div>
+
+            <hr>
+
+            <!-- AI Features -->
+
+            <div class="settings-section">
+
+                <h6 class="settings-title">
+                    🤖 AI Features
+                </h6>
+
+                <div class="form-check form-switch mb-3">
+
+                    <input
+                        class="form-check-input"
+                        type="checkbox"
+                        id="categoryPrediction"
+                        checked>
+
+                    <label
+                        class="form-check-label"
+                        for="categoryPrediction">
+
+                        AI Category Prediction
+
+                    </label>
+
+                </div>
+
+                <div class="form-check form-switch mb-3">
+
+                    <input
+                        class="form-check-input"
+                        type="checkbox"
+                        id="priorityPrediction"
+                        checked>
+
+                    <label
+                        class="form-check-label"
+                        for="priorityPrediction">
+
+                        AI Priority Prediction
+
+                    </label>
+
+                </div>
+
+            </div>
+
+            <hr>
+
+            <!-- Dashboard -->
+
+            <div class="settings-section">
+
+                <h6 class="settings-title">
+                    📊 Dashboard
+                </h6>
+
+                <label class="form-label">
+                    📋 Complaint Sort
+                </label>
+
+                <select class="form-select mb-3">
+
+                    <option selected>
+                        Newest First
+                    </option>
+
+                    <option>
+                        Oldest First
+                    </option>
+
+                </select>
+
+            </div>
+
+            <hr>
+
+            <!-- Data Management -->
+
+            <div class="settings-section">
+
+                <h6 class="settings-title">
+                    🗃️ Data Management
+                </h6>
+
+                <a
+                    href="/export"
+                    class="btn btn-success w-100 mb-3">
+
+                    📥 Export Complaints to Excel
+
+                </a>
+
+                <button
+                    type="button"
+                    class="btn btn-outline-danger w-100"
+                    onclick="confirmDeleteAll()">
+
+                    🗑️ Delete All Complaints
+
+                </button>
+
+            </div>
+
+            <hr>
+
+            <!-- Logout -->
+
+            <div class="settings-section">
+
+                <h6 class="settings-title">
+                    🔐 Account
+                </h6>
+
+                <a
+                    href="/logout"
+                    class="btn btn-danger w-100">
+
+                    🚪 Logout
+
+                </a>
+
+            </div>
+
+            <!-- Save -->
+
+            <div class="mt-4">
+
+                <button
+                    type="button"
+                    class="btn btn-primary w-100"
+                    onclick="saveSettings()">
+
+                    💾 Save Settings
+
+                </button>
+
+            </div>
+
+            <div
+                id="settingsMessage"
+                class="alert alert-success mt-3 d-none">
+
+                ✅ Settings saved successfully!
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+
+        function confirmDeleteAll() {
+
+            const confirmDelete = confirm(
+                "⚠️ Are you sure you want to delete ALL complaints?\n\nThis action cannot be undone."
+            );
+
+            if (confirmDelete) {
+                window.location.href = "/delete_all";
+            }
+
+        }
+
+        function saveSettings() {
+
+            const message =
+                document.getElementById("settingsMessage");
+
+            message.classList.remove("d-none");
+
+            setTimeout(function () {
+
+                message.classList.add("d-none");
+
+            }, 2500);
+
+        }
+
+    </script>
+
+</body>
+
+</html>

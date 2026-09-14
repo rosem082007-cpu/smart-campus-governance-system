@@ -1,0 +1,550 @@
+/* =====================================================
+   GENERAL BODY - COMMON BACKGROUND FOR ALL PAGES
+===================================================== */
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+}
+
+body {
+    font-family: Arial, sans-serif;
+
+    /* College photo background for all pages */
+    background-image:
+        linear-gradient(
+            rgba(0, 0, 0, 0.38),
+            rgba(0, 0, 0, 0.38)
+        ),
+        url("../images/college.png");
+
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+
+    min-height: 100vh;
+}
+
+
+/* =====================================================
+   PAGE WRAPPERS
+===================================================== */
+
+.login-page,
+.page-container,
+.main-container,
+.dashboard-container {
+    min-height: 100vh;
+}
+
+
+/* =====================================================
+   LOGIN PAGE
+===================================================== */
+
+.login-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 30px 15px;
+}
+
+
+/* =====================================================
+   COMMON CARDS
+===================================================== */
+
+.card,
+.login-card,
+.success-card,
+.complaint-card,
+.dashboard-card,
+.health-card {
+    background: rgba(255, 255, 255, 0.95);
+
+    border: none;
+    border-radius: 20px;
+
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.20);
+}
+
+
+/* =====================================================
+   LOGIN CARD
+===================================================== */
+
+.login-card {
+    width: 100%;
+    max-width: 540px;
+
+    border-radius: 28px;
+    padding: 30px;
+
+    text-align: center;
+
+    background: rgba(255, 255, 255, 0.96);
+
+    box-shadow:
+        0 15px 40px rgba(0, 0, 0, 0.30);
+}
+
+
+/* =====================================================
+   LOGIN LOGO
+===================================================== */
+
+.login-card img {
+    max-width: 110px;
+    height: auto;
+    margin-bottom: 10px;
+}
+
+
+/* =====================================================
+   LOGIN TITLE
+===================================================== */
+
+.login-card h1,
+.login-card h2,
+.login-card h3 {
+    font-weight: 700;
+}
+
+.login-card p {
+    color: #666;
+}
+
+
+/* =====================================================
+   LOGIN BUTTONS
+===================================================== */
+
+.login-card .btn {
+    width: 100%;
+
+    padding: 16px;
+    margin-top: 12px;
+
+    border-radius: 16px;
+
+    font-size: 20px;
+    font-weight: 600;
+
+    transition: 0.3s ease;
+}
+
+.login-card .btn:hover {
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 8px 18px rgba(0, 0, 0, 0.20);
+}
+
+
+/* =====================================================
+   COMMON BUTTON HOVER
+===================================================== */
+
+.btn {
+    transition: 0.3s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+}
+
+
+/* =====================================================
+   NAVBAR
+===================================================== */
+
+.navbar {
+    background: rgba(255, 255, 255, 0.95) !important;
+
+    box-shadow:
+        0 3px 15px rgba(0, 0, 0, 0.12);
+}
+
+
+/* =====================================================
+   FORM CONTROLS
+===================================================== */
+
+.form-control,
+.form-select,
+textarea {
+    border-radius: 10px;
+}
+
+.form-control:focus,
+.form-select:focus,
+textarea:focus {
+    border-color: #4f46e5;
+
+    box-shadow:
+        0 0 0 0.2rem rgba(79, 70, 229, 0.15);
+}
+
+
+/* =====================================================
+   PASSWORD EYE ICON
+===================================================== */
+
+.password-container {
+    position: relative;
+}
+
+.password-container input {
+    padding-right: 50px;
+}
+
+#togglePassword {
+    position: absolute;
+
+    right: 15px;
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    cursor: pointer;
+    user-select: none;
+
+    font-size: 22px;
+    z-index: 5;
+}
+
+input::-ms-reveal,
+input::-ms-clear {
+    display: none;
+}
+
+
+/* =====================================================
+   IMAGE PREVIEW
+===================================================== */
+
+#preview {
+    transition: 0.3s ease;
+}
+
+#preview:hover {
+    transform: scale(1.05);
+}
+
+#removeBtn {
+    margin-top: 10px;
+}
+
+
+/* =====================================================
+   SUCCESS CARD
+===================================================== */
+
+.success-card {
+    width: 90%;
+    max-width: 500px;
+
+    margin: 40px auto;
+    padding: 35px;
+
+    border-radius: 20px;
+
+    background: rgba(255, 255, 255, 0.96);
+
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.20);
+}
+
+
+/* =====================================================
+   SETTINGS SECTION
+===================================================== */
+
+.settings-section {
+    padding: 5px 0;
+}
+
+.settings-title {
+    font-weight: 600;
+    color: #343a40;
+    margin-bottom: 15px;
+}
+
+.form-switch .form-check-input {
+    width: 2.5em;
+    height: 1.3em;
+    cursor: pointer;
+}
+
+.form-switch .form-check-input:checked {
+    background-color: #4f46e5;
+    border-color: #4f46e5;
+}
+
+
+/* =====================================================
+   OFFCANVAS
+===================================================== */
+
+.offcanvas {
+    width: 380px !important;
+}
+
+/* =====================================================
+   FORCE COLLEGE BACKGROUND FOR ALL PROJECT PAGES
+===================================================== */
+
+html,
+body {
+    min-height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-image:
+        linear-gradient(
+            rgba(0, 0, 0, 0.38),
+            rgba(0, 0, 0, 0.38)
+        ),
+        url("../images/college.png") !important;
+
+    background-size: cover !important;
+    background-position: center center !important;
+    background-repeat: no-repeat !important;
+    background-attachment: fixed !important;
+
+    min-height: 100vh !important;
+}
+
+/* ================= NAVBAR TEXT VISIBILITY ================= */
+
+.navbar .navbar-brand {
+    color: #172033 !important;
+    font-weight: 700;
+}
+
+.navbar .navbar-brand:hover {
+    color: #2563eb !important;
+}
+
+.navbar .btn-outline-light {
+    color: #172033 !important;
+    border-color: #172033 !important;
+    background: rgba(255, 255, 255, 0.85);
+}
+
+.navbar .btn-outline-light:hover {
+    color: #ffffff !important;
+    background: #172033 !important;
+    border-color: #172033 !important;
+}
+
+.navbar .btn-primary {
+    color: #ffffff !important;
+}
+
+.navbar .btn-danger {
+    color: #ffffff !important;
+}
+
+/* ================= SETTINGS ICON BUTTON ================= */
+
+.settings-btn {
+    width: 48px;
+    height: 38px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+    font-size: 20px;
+    border-radius: 8px;
+}
+
+.settings-btn:hover {
+    transform: none;
+}
+
+
+/* ================= LARGE SETTINGS GEAR ================= */
+
+.settings-btn {
+    width: 52px;
+    height: 42px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+    font-size: 27px;
+    line-height: 1;
+
+    border-radius: 8px;
+}
+
+/* =====================================================
+   MOBILE RESPONSIVE
+===================================================== */
+
+@media (max-width: 768px) {
+
+    body {
+        background-position: center center;
+    }
+
+    .login-page {
+        padding: 20px 12px;
+    }
+
+    .container,
+    .container-fluid {
+        width: 100%;
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    .card,
+    .login-card,
+    .success-card {
+        max-width: 100%;
+    }
+
+    .login-card {
+        padding: 25px 20px;
+        border-radius: 22px;
+    }
+
+    .login-card h1 {
+        font-size: 28px;
+    }
+
+    .login-card h2 {
+        font-size: 24px;
+    }
+
+    .login-card p {
+        font-size: 15px;
+    }
+
+    .login-card .btn {
+        font-size: 17px;
+        padding: 14px;
+    }
+
+    .navbar .btn {
+        width: auto;
+        font-size: 13px;
+        padding: 6px 10px;
+    }
+}
+
+
+/* =====================================================
+   SMALL MOBILE
+===================================================== */
+
+@media (max-width: 576px) {
+
+    body {
+        background-attachment: scroll;
+    }
+
+    .offcanvas {
+        width: 90% !important;
+    }
+
+    .navbar {
+        padding: 12px !important;
+    }
+
+    .card,
+    .login-card,
+    .success-card {
+        border-radius: 18px;
+    }
+
+    .login-card {
+        padding: 25px 18px;
+    }
+
+    .login-card img {
+        max-width: 90px;
+    }
+
+    .login-card h1 {
+        font-size: 25px;
+    }
+
+    .login-card h2 {
+        font-size: 23px;
+    }
+
+    .login-card p {
+        font-size: 14px;
+    }
+
+    .login-card .btn {
+        font-size: 16px;
+        padding: 13px;
+    }
+
+    .success-card {
+        width: 92%;
+        padding: 25px 18px;
+        margin: 25px auto;
+    }
+
+    .success-card h1,
+    .success-card h2 {
+        font-size: 26px;
+    }
+
+    .success-card p {
+        font-size: 15px;
+    }
+
+    .complaint-info {
+        width: 100%;
+        padding: 18px !important;
+    }
+}
+
+
+/* =====================================================
+   VERY SMALL SCREEN
+===================================================== */
+
+@media (max-width: 400px) {
+
+    .offcanvas {
+        width: 100% !important;
+    }
+
+    .login-card {
+        padding: 20px !important;
+    }
+
+    .login-card img {
+        max-width: 75px;
+    }
+
+    .login-card h1 {
+        font-size: 23px;
+    }
+
+    .login-card h2 {
+        font-size: 21px;
+    }
+
+    .login-card .btn {
+        font-size: 15px;
+    }
+}

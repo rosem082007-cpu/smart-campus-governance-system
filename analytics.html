@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>CampusAI Analytics</title>
+
+    <!-- Bootstrap -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet">
+
+    <!-- Common CSS -->
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Icons -->
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+
+            background-image:
+                linear-gradient(
+                    rgba(0, 0, 0, 0.35),
+                    rgba(0, 0, 0, 0.35)
+                ),
+                url("{{ url_for('static', filename='images/college.png') }}");
+
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+
+        /* =========================
+           SIDEBAR
+        ========================= */
+
+        .sidebar {
+            width: 250px;
+            min-height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+
+            background: linear-gradient(
+                180deg,
+                #4f46e5,
+                #6d28d9
+            );
+
+            color: white;
+            padding: 25px 15px;
+        }
+
+        .sidebar h3 {
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 35px;
+        }
+
+        .sidebar a {
+            display: block;
+            color: white;
+            text-decoration: none;
+
+            padding: 13px 15px;
+            margin-bottom: 10px;
+
+            border-radius: 10px;
+            transition: 0.3s;
+        }
+
+        .sidebar a:hover {
+            background: rgba(255, 255, 255, 0.18);
+        }
+
+        .sidebar a.active {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        /* =========================
+           MAIN
+        ========================= */
+
+        .main {
+            margin-left: 250px;
+            padding: 30px;
+        }
+
+        /* =========================
+           HEADER
+        ========================= */
+
+        .top-header {
+            background: white;
+            padding: 20px 25px;
+
+            border-radius: 15px;
+            margin-bottom: 25px;
+
+            box-shadow:
+                0 4px 15px rgba(0, 0, 0, 0.06);
+        }
+
+        .top-header h2 {
+            margin: 0;
+            font-weight: bold;
+            color: #1f2937;
+        }
+
+        .top-header p {
+            margin: 5px 0 0;
+            color: #6b7280;
+        }
+
+        /* =========================
+           STAT CARDS
+        ========================= */
+
+        .stat-card {
+            background: white;
+            border-radius: 18px;
+
+            padding: 22px;
+
+            min-height: 150px;
+
+            box-shadow:
+                0 5px 18px rgba(0, 0, 0, 0.07);
+
+            transition: 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+
+            border-radius: 13px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 23px;
+            color: white;
+
+            margin-bottom: 12px;
+        }
+
+        .blue {
+            background: #4f46e5;
+        }
+
+        .orange {
+            background: #f59e0b;
+        }
+
+        .green {
+            background: #22c55e;
+        }
+
+        .red {
+            background: #ef4444;
+        }
+
+        .stat-card h6 {
+            color: #6b7280;
+            margin-bottom: 5px;
+        }
+
+        .stat-card h3 {
+            font-size: 30px;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        /* =========================
+           HEALTH SCORE
+        ========================= */
+
+        .health-card {
+            background: white;
+
+            border-radius: 18px;
+
+            padding: 25px;
+
+            margin-top: 25px;
+
+            box-shadow:
+                0 5px 18px rgba(0, 0, 0, 0.07);
+        }
+
+        .health-score {
+            font-size: 55px;
+            font-weight: bold;
+            color: #4f46e5;
+        }
+
+        .health-text {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .progress {
+            height: 20px;
+            border-radius: 20px;
+            background: #e5e7eb;
+        }
+
+        .progress-bar {
+            border-radius: 20px;
+            background: linear-gradient(
+                90deg,
+                #4f46e5,
+                #22c55e
+            );
+        }
+
+        /* =========================
+           CHART CARDS
+        ========================= */
+
+        .chart-card {
+            background: white;
+
+            border-radius: 18px;
+
+            padding: 25px;
+
+            margin-top: 25px;
+
+            box-shadow:
+                0 5px 18px rgba(0, 0, 0, 0.07);
+        }
+
+        .chart-card h5 {
+            font-weight: bold;
+            color: #1f2937;
+
+            margin-bottom: 20px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 330px;
+        }
+
+        /* =========================
+           FOOTER
+        ========================= */
+
+        .footer {
+            text-align: center;
+
+            color: white;
+
+            margin-top: 35px;
+            padding-bottom: 20px;
+        }
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        @media (max-width: 768px) {
+
+            .sidebar {
+                width: 100%;
+                min-height: auto;
+
+                position: relative;
+            }
+
+            .sidebar h3 {
+                margin-bottom: 15px;
+            }
+
+            .sidebar a {
+                display: inline-block;
+                margin-right: 5px;
+            }
+
+            .main {
+                margin-left: 0;
+                padding: 15px;
+            }
+
+            .chart-container {
+                height: 280px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <!-- =========================
+         SIDEBAR
+    ========================= -->
+
+    <div class="sidebar">
+
+        <h3>
+            🏫 CampusAI
+        </h3>
+
+        <a href="/admin">
+
+            <i class="bi bi-speedometer2"></i>
+            Dashboard
+
+        </a>
+
+        <a href="/analytics" class="active">
+
+            <i class="bi bi-bar-chart-fill"></i>
+            Analytics
+
+        </a>
+
+        <a href="/export">
+
+            <i class="bi bi-file-earmark-excel"></i>
+            Export Excel
+
+        </a>
+
+        <a href="/logout">
+
+            <i class="bi bi-box-arrow-right"></i>
+            Logout
+
+        </a>
+
+    </div>
+
+    <!-- =========================
+         MAIN
+    ========================= -->
+
+    <div class="main">
+
+        <!-- HEADER -->
+
+        <div class="top-header">
+
+            <h2>
+                📊 Campus Analytics
+            </h2>
+
+            <p>
+                Monitor campus complaints and performance
+            </p>
+
+        </div>
+
+        <!-- =========================
+             STAT CARDS
+        ========================= -->
+
+        <div class="row g-4">
+
+            <!-- TOTAL -->
+
+            <div class="col-lg-3 col-md-6">
+
+                <div class="stat-card">
+
+                    <div class="stat-icon blue">
+                        <i class="bi bi-clipboard-data"></i>
+                    </div>
+
+                    <h6>
+                        Total Complaints
+                    </h6>
+
+                    <h3>
+                        {{ total|default(0) }}
+                    </h3>
+
+                </div>
+
+            </div>
+
+            <!-- PENDING -->
+
+            <div class="col-lg-3 col-md-6">
+
+                <div class="stat-card">
+
+                    <div class="stat-icon orange">
+                        <i class="bi bi-hourglass-split"></i>
+                    </div>
+
+                    <h6>
+                        Pending
+                    </h6>
+
+                    <h3>
+                        {{ pending|default(0) }}
+                    </h3>
+
+                </div>
+
+            </div>
+
+            <!-- RESOLVED -->
+
+            <div class="col-lg-3 col-md-6">
+
+                <div class="stat-card">
+
+                    <div class="stat-icon green">
+                        <i class="bi bi-check-circle"></i>
+                    </div>
+
+                    <h6>
+                        Resolved
+                    </h6>
+
+                    <h3>
+                        {{ resolved|default(0) }}
+                    </h3>
+
+                </div>
+
+            </div>
+
+            <!-- HIGH PRIORITY -->
+
+            <div class="col-lg-3 col-md-6">
+
+                <div class="stat-card">
+
+                    <div class="stat-icon red">
+                        <i class="bi bi-exclamation-triangle"></i>
+                    </div>
+
+                    <h6>
+                        High Priority
+                    </h6>
+
+                    <h3>
+                        {{ high|default(0) }}
+                    </h3>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- =========================
+             HEALTH SCORE
+        ========================= -->
+
+        <div class="health-card">
+
+            <div class="row align-items-center">
+
+                <div class="col-md-3 text-center">
+
+                    <div class="health-score">
+                        {{ health_score|default(100) }}
+                    </div>
+
+                    <div class="health-text">
+                        Campus Health Score
+                    </div>
+
+                </div>
+
+                <div class="col-md-9">
+
+                    <h5 class="fw-bold">
+                        Campus Performance
+                    </h5>
+
+                    <p class="text-muted">
+                        Overall complaint resolution performance
+                    </p>
+
+                    <!-- Score is stored in data-score -->
+
+                    <div
+                        class="progress"
+                        id="healthProgress"
+                        data-score="{{ health_score|default(100) }}">
+
+                        <div
+                            class="progress-bar"
+                            id="healthBar"
+                            role="progressbar">
+
+                        </div>
+
+                    </div>
+
+                    <div class="mt-2">
+
+                        <span
+                            id="healthMessage"
+                            class="fw-semibold">
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- =========================
+             HIDDEN DATA
+        ========================= -->
+
+        <div
+            id="category-data"
+            data-labels="{{ category_labels|default([])|tojson|forceescape }}"
+            data-counts="{{ category_counts|default([])|tojson|forceescape }}">
+        </div>
+
+        <div
+            id="priority-data"
+            data-labels="{{ priority_labels|default([])|tojson|forceescape }}"
+            data-counts="{{ priority_counts|default([])|tojson|forceescape }}">
+        </div>
+
+        <div
+            id="department-data"
+            data-labels="{{ department_labels|default([])|tojson|forceescape }}"
+            data-counts="{{ department_counts|default([])|tojson|forceescape }}">
+        </div>
+
+        <!-- =========================
+             CATEGORY CHART
+        ========================= -->
+
+        <div class="chart-card">
+
+            <h5>
+                🏷️ Category Wise Complaints
+            </h5>
+
+            <div class="chart-container">
+
+                <canvas id="categoryChart"></canvas>
+
+            </div>
+
+        </div>
+
+        <!-- =========================
+             PRIORITY CHART
+        ========================= -->
+
+        <div class="chart-card">
+
+            <h5>
+                🚨 Priority Wise Complaints
+            </h5>
+
+            <div class="chart-container">
+
+                <canvas id="priorityChart"></canvas>
+
+            </div>
+
+        </div>
+
+        <!-- =========================
+             DEPARTMENT CHART
+        ========================= -->
+
+        <div class="chart-card">
+
+            <h5>
+                🏫 Department-wise Complaints
+            </h5>
+
+            <div class="chart-container">
+
+                <canvas id="departmentChart"></canvas>
+
+            </div>
+
+        </div>
+
+        <!-- FOOTER -->
+
+        <div class="footer">
+
+            <p>
+                © 2026 CampusAI - Smart Campus Governance System
+            </p>
+
+        </div>
+
+    </div>
+
+    <!-- =========================
+         JAVASCRIPT
+    ========================= -->
+
+    <script>
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            function () {
+
+                /* =========================
+                   GET DATA
+                ========================= */
+
+                const categoryElement =
+                    document.getElementById("category-data");
+
+                const priorityElement =
+                    document.getElementById("priority-data");
+
+                const departmentElement =
+                    document.getElementById("department-data");
+
+                let categoryLabels = [];
+                let categoryCounts = [];
+
+                let priorityLabels = [];
+                let priorityCounts = [];
+
+                let departmentLabels = [];
+                let departmentCounts = [];
+
+                /* CATEGORY DATA */
+
+                if (categoryElement) {
+
+                    try {
+
+                        categoryLabels =
+                            JSON.parse(
+                                categoryElement.dataset.labels
+                            );
+
+                        categoryCounts =
+                            JSON.parse(
+                                categoryElement.dataset.counts
+                            );
+
+                    } catch (error) {
+
+                        console.error(
+                            "Category data error:",
+                            error
+                        );
+
+                    }
+
+                }
+
+                /* PRIORITY DATA */
+
+                if (priorityElement) {
+
+                    try {
+
+                        priorityLabels =
+                            JSON.parse(
+                                priorityElement.dataset.labels
+                            );
+
+                        priorityCounts =
+                            JSON.parse(
+                                priorityElement.dataset.counts
+                            );
+
+                    } catch (error) {
+
+                        console.error(
+                            "Priority data error:",
+                            error
+                        );
+
+                    }
+
+                }
+
+                /* DEPARTMENT DATA */
+
+                if (departmentElement) {
+
+                    try {
+
+                        departmentLabels =
+                            JSON.parse(
+                                departmentElement.dataset.labels
+                            );
+
+                        departmentCounts =
+                            JSON.parse(
+                                departmentElement.dataset.counts
+                            );
+
+                    } catch (error) {
+
+                        console.error(
+                            "Department data error:",
+                            error
+                        );
+
+                    }
+
+                }
+
+                /* =========================
+                   HEALTH SCORE
+                ========================= */
+
+                const healthProgress =
+                    document.getElementById(
+                        "healthProgress"
+                    );
+
+                const healthBar =
+                    document.getElementById(
+                        "healthBar"
+                    );
+
+                const healthMessage =
+                    document.getElementById(
+                        "healthMessage"
+                    );
+
+                if (healthProgress && healthBar) {
+
+                    let score =
+                        parseInt(
+                            healthProgress.dataset.score
+                        );
+
+                    if (isNaN(score)) {
+                        score = 100;
+                    }
+
+                    if (score < 0) {
+                        score = 0;
+                    }
+
+                    if (score > 100) {
+                        score = 100;
+                    }
+
+                    healthBar.style.width =
+                        score + "%";
+
+                    healthBar.setAttribute(
+                        "aria-valuenow",
+                        score
+                    );
+
+                    if (healthMessage) {
+
+                        if (score >= 80) {
+
+                            healthMessage.innerHTML =
+                                "Excellent 🟢";
+
+                            healthBar.style.background =
+                                "#22c55e";
+
+                        } else if (score >= 60) {
+
+                            healthMessage.innerHTML =
+                                "Good 🟡";
+
+                            healthBar.style.background =
+                                "#f59e0b";
+
+                        } else {
+
+                            healthMessage.innerHTML =
+                                "Needs Improvement 🔴";
+
+                            healthBar.style.background =
+                                "#ef4444";
+
+                        }
+
+                    }
+
+                }
+
+                /* =========================
+                   CATEGORY CHART
+                ========================= */
+
+                const categoryCanvas =
+                    document.getElementById(
+                        "categoryChart"
+                    );
+
+                if (categoryCanvas) {
+
+                    new Chart(
+                        categoryCanvas,
+                        {
+
+                            type: "bar",
+
+                            data: {
+
+                                labels:
+                                    categoryLabels,
+
+                                datasets: [
+
+                                    {
+
+                                        label:
+                                            "Complaints",
+
+                                        data:
+                                            categoryCounts,
+
+                                        backgroundColor: [
+                                            "#4f46e5",
+                                            "#06b6d4",
+                                            "#22c55e",
+                                            "#f59e0b",
+                                            "#ef4444",
+                                            "#8b5cf6",
+                                            "#ec4899"
+                                        ],
+
+                                        borderRadius: 8
+
+                                    }
+
+                                ]
+
+                            },
+
+                            options: {
+
+                                responsive: true,
+
+                                maintainAspectRatio: false,
+
+                                plugins: {
+
+                                    legend: {
+                                        display: false
+                                    }
+
+                                },
+
+                                scales: {
+
+                                    y: {
+
+                                        beginAtZero: true,
+
+                                        ticks: {
+                                            precision: 0
+                                        }
+
+                                    }
+
+                                }
+
+                            }
+
+                        }
+                    );
+
+                }
+
+                /* =========================
+                   PRIORITY CHART
+                ========================= */
+
+                const priorityCanvas =
+                    document.getElementById(
+                        "priorityChart"
+                    );
+
+                if (priorityCanvas) {
+
+                    new Chart(
+                        priorityCanvas,
+                        {
+
+                            type: "doughnut",
+
+                            data: {
+
+                                labels:
+                                    priorityLabels,
+
+                                datasets: [
+
+                                    {
+
+                                        data:
+                                            priorityCounts,
+
+                                        backgroundColor: [
+                                            "#22c55e",
+                                            "#f59e0b",
+                                            "#ef4444",
+                                            "#6366f1"
+                                        ],
+
+                                        borderWidth: 2,
+
+                                        borderColor:
+                                            "#ffffff"
+
+                                    }
+
+                                ]
+
+                            },
+
+                            options: {
+
+                                responsive: true,
+
+                                maintainAspectRatio: false,
+
+                                plugins: {
+
+                                    legend: {
+                                        position: "bottom"
+                                    }
+
+                                }
+
+                            }
+
+                        }
+                    );
+
+                }
+
+                /* =========================
+                   DEPARTMENT CHART
+                ========================= */
+
+                const departmentCanvas =
+                    document.getElementById(
+                        "departmentChart"
+                    );
+
+                if (departmentCanvas) {
+
+                    new Chart(
+                        departmentCanvas,
+                        {
+
+                            type: "bar",
+
+                            data: {
+
+                                labels:
+                                    departmentLabels,
+
+                                datasets: [
+
+                                    {
+
+                                        label:
+                                            "Complaints",
+
+                                        data:
+                                            departmentCounts,
+
+                                        backgroundColor:
+                                            "#6366f1",
+
+                                        borderRadius: 8
+
+                                    }
+
+                                ]
+
+                            },
+
+                            options: {
+
+                                responsive: true,
+
+                                maintainAspectRatio: false,
+
+                                plugins: {
+
+                                    legend: {
+                                        display: false
+                                    }
+
+                                },
+
+                                scales: {
+
+                                    y: {
+
+                                        beginAtZero: true,
+
+                                        ticks: {
+                                            precision: 0
+                                        }
+
+                                    }
+
+                                }
+
+                            }
+
+                        }
+                    );
+
+                }
+
+            }
+
+        );
+
+    </script>
+
+</body>
+
+</html>
